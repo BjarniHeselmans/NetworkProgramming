@@ -34,11 +34,11 @@ Start de client:
 ```
 
 ### 🎲 Speluitleg
-```bash
+
 Voer je naam in.
 
 Raad een getal tussen 1 en 5.
-```
+
 De server laat weten of je juist gokte, en hoeveel muntjes je hebt.
 
 Na elke ronde kies je of je **opnieuw speelt (N)** of **afsluit (Q)**.
@@ -49,3 +49,16 @@ PUSH socket stuurt het gokbericht naar "tcp://benternet.pxl-ea-ict.be:24041"
 SUB socket ontvangt antwoorden op "tcp://benternet.pxl-ea-ict.be:24042"
 
 De SUB filtert op *Bjarni>CoinGame!>[NAAM]>* zodat enkel jouw antwoorden getoond worden.
+
+✨ Voorbeeld
+```yaml
+Code kopiëren
+
+Welkom bij CoinGame!
+Voer je naam in: Bjarni
+
+Raad een getal tussen 1 en 5: 3
+Server: Juist! Je hebt nu 3 muntjes.
+
+Wil je nog een keer spelen? (N = nog eens, Q = stoppen): N
+```
