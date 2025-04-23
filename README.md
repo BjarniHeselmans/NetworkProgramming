@@ -43,14 +43,14 @@ De server laat weten of je juist gokte, en hoeveel muntjes je hebt.
 
 Na elke ronde kies je of je **opnieuw speelt (N)** of **afsluit (Q)**.
 
-📡 Technische details
+### 📡 Technische details
 PUSH socket stuurt het gokbericht naar "tcp://benternet.pxl-ea-ict.be:24041"
 
 SUB socket ontvangt antwoorden op "tcp://benternet.pxl-ea-ict.be:24042"
 
 De SUB filtert op *Bjarni>CoinGame!>[NAAM]>* zodat enkel jouw antwoorden getoond worden.
 
-✨ Voorbeeld
+### ✨ Voorbeeld
 ```yaml
 Welkom bij CoinGame!
 Voer je naam in: Bjarni
