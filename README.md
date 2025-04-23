@@ -52,13 +52,11 @@ De SUB filtert op *Bjarni>CoinGame!>[NAAM]>* zodat enkel jouw antwoorden getoond
 
 ✨ Voorbeeld
 ```yaml
-Code kopiëren
-
 Welkom bij CoinGame!
 Voer je naam in: Bjarni
 
-Raad een getal tussen 1 en 5: 3
-Server: Juist! Je hebt nu 3 muntjes.
+Raad een getal tussen 1 en 5: 1
+Server: Juist! Je hebt nu 1 muntjes.
 
 Wil je nog een keer spelen? (N = nog eens, Q = stoppen): N
 ```
