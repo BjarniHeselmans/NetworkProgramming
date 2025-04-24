@@ -2,14 +2,14 @@
 
 Welkom bij **CoinLand**! Dit project bevat twee ZeroMQ-gebaseerde minigames die draaien over het Benternet-netwerk:
 
-- 🎯 **CoinGame** – Raad een getal tussen 1 en 5 en verdien muntjes.
-- 🎰 **SlotMachine** – Draai drie symbolen en win muntjes op basis van combinaties.
+- **CoinGame** – Raad een getal tussen 1 en 5 en verdien muntjes.
+- **SlotMachine** – Draai drie symbolen en win muntjes op basis van combinaties.
 
 Beide games delen dezelfde **spelersnaam** en **muntjesbalans**, waardoor er één geïntegreerde spelervaring ontstaat. 
 
 ---
 
-## 🌐 Overzicht
+## Overzicht
 
 Spelers communiceren via ZeroMQ met de services die op het Benternet draaien. De speler:
 
@@ -21,7 +21,7 @@ Muntjes worden bijgehouden **per naam**, en bestaan alleen in de service-geheuge
 
 ---
 
-## 🧠 CoinGame Flow
+## CoinGame Flow
 
 ```mermaid
 flowchart TD
@@ -34,7 +34,7 @@ flowchart TD
     Resultaat --> SendBack[Stuur antwoord via Bjarni>CoinGame!>Naam>...>]
     SendBack --> ClientToon[Client toont resultaat aan speler]
 ```
-## 🎰 SlotMachine Flow
+## SlotMachine Flow
 ```mermaid
 flowchart TD
     Start --> NaamInvoer[Speler voert naam in]
@@ -45,4 +45,26 @@ flowchart TD
     Rollen --> Evaluatie[Bepaal resultaat: 3x = 10 coins, 2x = 2 coins, anders 0]
     Evaluatie --> SendBack[Stuur antwoord via Bjarni>SlotMachine!>Naam>...>]
     SendBack --> ClientToon[Client toont symbolen en muntjesresultaat]
+```
+
+## Gemeenschappelijk gebruik van naam & muntjes
+Beide services houden per spelernaam de muntjes bij in een std::unordered_map<std::string, int>. Dit betekent:
+- Elke service onthoudt lokaal de muntjesstand van spelers.
+- Dezelfde naam = dezelfde speler (in beide spellen).
+- Spelers kunnen dus muntjes winnen in CoinGame en gebruiken in SlotMachine (of omgekeerd).
+
+## Communicatieschema
+```mermaid
+sequenceDiagram
+    participant Client
+    participant CoinGameService
+    participant SlotMachineService
+
+    Note over Client,CoinGameService: CoinGame-protocol
+    Client->>CoinGameService: Bjarni>CoinGame?>Bjarni>4>
+    CoinGameService-->>Client: Bjarni>CoinGame!>Bjarni>Correct! +1 muntje>
+
+    Note over Client,SlotMachineService: SlotMachine-protocol
+    Client->>SlotMachineService: Bjarni>SlotMachine?>Bjarni>
+    SlotMachineService-->>Client: Bjarni>SlotMachine!>Bjarni>🍒 🍒 🍋 => 2 muntjes>
 ```
