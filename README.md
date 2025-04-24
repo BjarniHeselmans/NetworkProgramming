@@ -33,7 +33,7 @@ flowchart TD
     Compare --> Resultaat[Correct? Ja/nee + update muntjes]
     Resultaat --> SendBack[Stuur antwoord via Bjarni>CoinGame!>Naam>...>]
     SendBack --> ClientToon[Client toont resultaat aan speler]
-
+```
 ## 🎰 SlotMachine Flow
 ```mermaid
 flowchart TD
@@ -45,3 +45,4 @@ flowchart TD
     Rollen --> Evaluatie[Bepaal resultaat: 3x = 10 coins, 2x = 2 coins, anders 0]
     Evaluatie --> SendBack[Stuur antwoord via Bjarni>SlotMachine!>Naam>...>]
     SendBack --> ClientToon[Client toont symbolen en muntjesresultaat]
+```
