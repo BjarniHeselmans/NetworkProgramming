@@ -33,3 +33,15 @@ flowchart TD
     Compare --> Resultaat[Correct? Ja/nee + update muntjes]
     Resultaat --> SendBack[Stuur antwoord via Bjarni>CoinGame!>Naam>...>]
     SendBack --> ClientToon[Client toont resultaat aan speler]
+
+## 🎰 SlotMachine Flow
+```mermaid
+flowchart TD
+    Start --> NaamInvoer[Speler voert naam in]
+    NaamInvoer --> ClickPlay[Klik op 'Speel!']
+    ClickPlay --> SendSpin[Client stuurt Bjarni>SlotMachine?>Naam>]
+    SendSpin --> SlotService[SlotMachine-service ontvangt verzoek]
+    SlotService --> Rollen[Genereer 3 willekeurige symbolen]
+    Rollen --> Evaluatie[Bepaal resultaat: 3x = 10 coins, 2x = 2 coins, anders 0]
+    Evaluatie --> SendBack[Stuur antwoord via Bjarni>SlotMachine!>Naam>...>]
+    SendBack --> ClientToon[Client toont symbolen en muntjesresultaat]
