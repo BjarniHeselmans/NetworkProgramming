@@ -68,3 +68,24 @@ sequenceDiagram
     Client->>SlotMachineService: Bjarni>SlotMachine?>Bjarni>
     SlotMachineService-->>Client: Bjarni>SlotMachine!>Bjarni>🍒 🍒 🍋 => 2 muntjes>
 ```
+
+## Bestandsoverzicht
+- coingame_service.cpp – C++ CoinGame-server
+- slotmachine_service.cpp – C++ SlotMachine-server
+- coingame_client.cpp – CLI-client voor CoinGame
+- slotmachine_gui_client.py – GUI-client in Python voor SlotMachine
+
+## Uitvoeren
+```bash
+# CoinGame server starten
+./coingame_service
+
+# SlotMachine server starten
+./slotmachine_service
+
+# CoinGame client starten (C++)
+./coingame_client //Komt nog GUI voor
+
+# SlotMachine GUI starten (Python)
+python slotmachine_gui_client.py
+```
