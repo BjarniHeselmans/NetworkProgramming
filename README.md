@@ -89,3 +89,6 @@ sequenceDiagram
 # SlotMachine GUI starten (Python)
 python slotmachine_gui_client.py
 ```
+
+## Auteurs
+Bjarni Heselmans - Project voor Network Programming - Benternet
