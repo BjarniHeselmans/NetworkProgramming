@@ -1,62 +1,94 @@
-# NetworkProgramming
-this exercise makes use of the exercises before in the following repo: **https://github.com/BjarniHeselmans/Benternet-EX1-EX2**
+# 🎰 CoinLand Project - CoinGame & SlotMachine over Benternet
 
-# 🎮 CoinGame
+Welkom bij **CoinLand**! Dit project bevat twee ZeroMQ-gebaseerde minigames die draaien over het Benternet-netwerk:
 
-CoinGame is een eenvoudige client-server toepassing waarin spelers via het netwerk een gokspel kunnen spelen om muntjes te verzamelen. De communicatie verloopt via **ZeroMQ** sockets.
+- **CoinGame** – Raad een getal tussen 1 en 5 en verdien muntjes.
+- **SlotMachine** – Draai drie symbolen en win muntjes op basis van combinaties.
 
-## 📦 Bestanden
-
-- `coingame_service.cpp` – De server/service die het spel beheert.
-- `coingame_client.cpp` – Een command-line client waarmee een speler kan deelnemen.
-- *(optioneel)* `coingame_gui.py` – Een Python GUI-client met Tkinter (voorbeeld).
+Beide games delen dezelfde **spelersnaam** en **muntjesbalans**, waardoor er één geïntegreerde spelervaring ontstaat. 
 
 ---
 
-## 🔧 Compilatie en uitvoering
+## Overzicht
 
-### ✅ Vereisten
-- C++ compiler
-- ZeroMQ library (`libzmq`)
-- Python 3 + pyzmq (voor GUI-optie)
+Spelers communiceren via ZeroMQ met de services die op het Benternet draaien. De speler:
 
-### 🔨 Compilatie (Linux/Mac)
+1. Voert zijn naam in.
+2. Stuurt een verzoek naar een van de services.
+3. Krijgt een gepersonaliseerd antwoord terug met resultaat én muntjesupdate.
+
+Muntjes worden bijgehouden **per naam**, en bestaan alleen in de service-geheugenruimte (later uitbreidbaar met opslag).
+
+---
+
+## CoinGame Flow
+
+```mermaid
+flowchart TD
+    Start --> NaamInvoer[Speler voert naam in]
+    NaamInvoer --> Raad[Raad getal tussen 1 en 5]
+    Raad --> SendGuess[Client stuurt Bjarni>CoinGame?>Naam>Gok>]
+    SendGuess --> Service[CoinGame-service ontvangt gok]
+    Service --> Compare[Genereer random getal en vergelijk]
+    Compare --> Resultaat[Correct? Ja/nee + update muntjes]
+    Resultaat --> SendBack[Stuur antwoord via Bjarni>CoinGame!>Naam>...>]
+    SendBack --> ClientToon[Client toont resultaat aan speler]
+```
+## SlotMachine Flow
+```mermaid
+flowchart TD
+    Start --> NaamInvoer[Speler voert naam in]
+    NaamInvoer --> ClickPlay[Klik op 'Speel!']
+    ClickPlay --> SendSpin[Client stuurt Bjarni>SlotMachine?>Naam>]
+    SendSpin --> SlotService[SlotMachine-service ontvangt verzoek]
+    SlotService --> Rollen[Genereer 3 willekeurige symbolen]
+    Rollen --> Evaluatie[Bepaal resultaat: 3x = 10 coins, 2x = 2 coins, anders 0]
+    Evaluatie --> SendBack[Stuur antwoord via Bjarni>SlotMachine!>Naam>...>]
+    SendBack --> ClientToon[Client toont symbolen en muntjesresultaat]
+```
+
+## Gemeenschappelijk gebruik van naam & muntjes
+Beide services houden per spelernaam de muntjes bij in een std::unordered_map<std::string, int>. Dit betekent:
+- Elke service onthoudt lokaal de muntjesstand van spelers.
+- Dezelfde naam = dezelfde speler (in beide spellen).
+- Spelers kunnen dus muntjes winnen in CoinGame en gebruiken in SlotMachine (of omgekeerd).
+
+## Communicatieschema
+```mermaid
+sequenceDiagram
+    participant Client
+    participant CoinGameService
+    participant SlotMachineService
+
+    Note over Client,CoinGameService: CoinGame-protocol
+    Client->>CoinGameService: Bjarni>CoinGame?>Bjarni>4>
+    CoinGameService-->>Client: Bjarni>CoinGame!>Bjarni>Correct! +1 muntje>
+
+    Note over Client,SlotMachineService: SlotMachine-protocol
+    Client->>SlotMachineService: Bjarni>SlotMachine?>Bjarni>
+    SlotMachineService-->>Client: Bjarni>SlotMachine!>Bjarni>🍒 🍒 🍋 => 2 muntjes>
+```
+
+## Bestandsoverzicht
+- coingame_service.cpp – C++ CoinGame-server
+- slotmachine_service.cpp – C++ SlotMachine-server
+- coingame_client.cpp – CLI-client voor CoinGame
+- slotmachine_gui_client.py – GUI-client in Python voor SlotMachine
+
+## Uitvoeren
 ```bash
-g++ coingame_service.cpp -o service -lzmq
-g++ coingame_client.cpp -o client -lzmq
+# CoinGame server starten
+./coingame_service
+
+# SlotMachine server starten
+./slotmachine_service
+
+# CoinGame client starten (C++)
+./coingame_client //Komt nog GUI voor
+
+# SlotMachine GUI starten (Python)
+python slotmachine_gui_client.py
 ```
 
-### ▶️ Uitvoeren
-Start de client:
-
-```bash
-./CoinGameClient
-```
-
-### 🎲 Speluitleg
-
-Voer je naam in.
-
-Raad een getal tussen 1 en 5.
-
-De server laat weten of je juist gokte, en hoeveel muntjes je hebt.
-
-Na elke ronde kies je of je **opnieuw speelt (N)** of **afsluit (Q)**.
-
-### 📡 Technische details
-PUSH socket stuurt het gokbericht naar "tcp://benternet.pxl-ea-ict.be:24041"
-
-SUB socket ontvangt antwoorden op "tcp://benternet.pxl-ea-ict.be:24042"
-
-De SUB filtert op *Bjarni>CoinGame!>[NAAM]>* zodat enkel jouw antwoorden getoond worden.
-
-### ✨ Voorbeeld
-```yaml
-Welkom bij CoinGame!
-Voer je naam in: Bjarni
-
-Raad een getal tussen 1 en 5: 1
-Server: Juist! Je hebt nu 1 muntjes.
-
-Wil je nog een keer spelen? (N = nog eens, Q = stoppen): N
-```
+## Auteurs
+Bjarni Heselmans - Project voor Network Programming - Benternet
