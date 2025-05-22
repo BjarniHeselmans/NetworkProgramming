@@ -1,4 +1,4 @@
-// g++ -std=c++20 coinland_service.cpp -o conland_service.exe -IC:\msys64\mingw64\include -LC:\msys64\mingw64\lib -lzmq
+// g++ -std=c++20 coinland_service.cpp -o coinland_service.exe -IC:\msys64\mingw64\include -LC:\msys64\mingw64\lib -lzmq
 #include <zmq.hpp>
 #include <iostream>
 #include <string>
@@ -7,7 +7,7 @@
 #include <ctime>
 #include <cstdlib>
 
-// 🔍 Haalt naam en gok uit CoinGame-bericht
+// Haalt naam en gok uit CoinGame-bericht
 std::string extract_name_and_guess(const std::string& msg, int& guess_out) {
     size_t start = msg.find("?>");
     if (start == std::string::npos) return "";
@@ -27,7 +27,7 @@ std::string extract_name_and_guess(const std::string& msg, int& guess_out) {
     return naam;
 }
 
-// 🔍 Haalt naam uit SlotMachine-bericht
+//Haalt naam uit SlotMachine-bericht
 std::string extract_name(const std::string& message) {
     size_t pos = message.find("?>");
     if (pos == std::string::npos) return "";
@@ -36,10 +36,10 @@ std::string extract_name(const std::string& message) {
     return part.substr(0, end);
 }
 
-// 🎰 SlotMachine symbolen
+// SlotMachine symbolen
 std::vector<std::string> slot_symbols = {"CHERRY", "LEMON", "BELL", "STAR", "DIAMOND"};
 
-// 🔄 Genereer 3 symbolen
+// Genereer 3 symbolen
 std::vector<std::string> spin_slots() {
     std::vector<std::string> result;
     for (int i = 0; i < 3; ++i) {
@@ -49,7 +49,7 @@ std::vector<std::string> spin_slots() {
     return result;
 }
 
-// 📊 Bepaal winst uit SlotMachine
+// Bepaal winst uit SlotMachine
 std::string determine_slot_outcome(const std::vector<std::string>& result, int& winst) {
     if (result[0] == result[1] && result[1] == result[2]) {
         winst = 10;
@@ -79,7 +79,7 @@ int main() {
     std::unordered_map<std::string, int> munten;
     srand(static_cast<unsigned int>(time(nullptr)));
 
-    std::cout << "🎮 CoinLand Service actief...\n";
+    std::cout << "CoinLand Service actief...\n";
 
     while (true) {
         zmq::message_t msg;
@@ -92,7 +92,15 @@ int main() {
         if (bericht.rfind("Bjarni>CoinGame?>", 0) == 0) {
             int gok = -1;
             std::string naam = extract_name_and_guess(bericht, gok);
-            if (naam.empty() || gok < 1 || gok > 5) continue;
+            if (naam.empty()) continue;
+
+            if (gok < 1 || gok > 5) {
+                std::string fout = "Bjarni>CoinGame!>" + naam + ">Ongeldige gok: \"" +
+                std::to_string(gok) + "\". Voer een getal in tussen 1 en 5.";
+                push_socket.send(zmq::buffer(fout), zmq::send_flags::none);
+                std::cout << "[CoinGame] " << naam << ": Ongeldige gok (" << gok << ")\n";
+            continue;
+            }
 
             int juist = 1 + rand() % 5;
             std::string feedback;
