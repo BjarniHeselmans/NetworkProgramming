@@ -49,7 +49,7 @@ flowchart TD
     SendSpin --> SlotService[CoinLand-service verwerkt verzoek]
     SlotService --> Rollen[Genereer 3 symbolen]
     Rollen --> Evaluatie[Bepaal winst: 0, 2 of 10 muntjes]
-    Evaluatie --> Update[Pas muntenbalans aan (min 2 inzet, plus winst)]
+    Evaluatie --> Update[Pas muntenbalans aan: -2 inzet, +winst]
     Update --> SendBack[Stuur resultaat terug via Bjarni>SlotMachine!>Naam>]
     SendBack --> ClientToon[Toon resultaat en huidige balans in GUI]
 ```
